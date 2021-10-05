@@ -1,0 +1,13 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace @-Namespace-@.Services
+{
+    public class @-Model-@Service
+    {
+        
+    }
+}

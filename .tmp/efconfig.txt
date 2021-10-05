@@ -1,0 +1,17 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using @-Namespace-@.Models;
+
+namespace @-Namespace-@.Data.Configurations
+{
+    public class @-Model-@Config : IEntityTypeConfiguration<@-Model-@>
+    {
+        public void Configure(EntityTypeBuilder<@-Model-@> builder)
+        {
+            @-Prop-@
+        }
+    }
+}
