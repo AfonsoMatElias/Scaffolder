@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Billing.Service.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Billing.Service.Data.Configurations
+{
+    public class @-Model-@Config : IEntityTypeConfiguration<@-Model-@>
+    {
+        public void Configure(EntityTypeBuilder<@-Model-@> builder)
+        {
+            new BaseConfig().Configure(builder);
+            @-Prop-@
+        }
+    }
+}

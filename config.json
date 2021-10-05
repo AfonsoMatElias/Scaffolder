@@ -1,0 +1,48 @@
+{
+  "Name": "Scaffolder",
+  "Version": "1.1.0",
+  "Applications": {
+    "Billing.App": {
+
+      "AppPath": "C:/dev/dotnet/billing.app/",
+
+      "Scaffolders": {
+        "Models": [{
+          "DbModels": "Billing.Service/Models"
+        }],
+        "Controller": [{
+          "Trailer": "Controller",
+          "Output": "Billing.App/Controllers/Api",
+          "Template": "controller.txt"
+        }],
+        "Service": [{
+            "Trailer": "Service",
+            "Output": "Billing.Service/Services/Implementations",
+            "Template": "service.txt"
+          },
+          {
+            "Header": "I",
+            "Trailer": "Service",
+            "Output": "Billing.Service/Services/Interfaces",
+            "Template": "iservice.txt"
+          }
+        ],
+        "ViewModel": [{
+          "Trailer": "Dto",
+          "Output": "Billing.Service/Dto",
+          "Template": "viewmodel.txt",
+          "Namespace": "Billing.Service.Dto",
+          "AditionalsProperties": [
+            "public string uid { get; set; }"
+          ]
+        }],
+        "EFCore": [{
+          "Trailer": "Config",
+          "Output": "Billing.Service/Data",
+          "Template": "efconfig.txt"
+        }]
+      }
+
+    }
+  }
+}
