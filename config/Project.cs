@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -10,7 +11,7 @@ namespace Scaffolder
         private string mAppPath;
         public string AppPath { 
             get => mAppPath; 
-            set => mAppPath = Shared.PathNormalizer(value);
+            set => mAppPath = Path.Combine((value ?? "").Split("/").ToArray());
         }
 
         public dynamic Scaffolders { get; set; }
