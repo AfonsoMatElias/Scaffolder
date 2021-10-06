@@ -1,2 +1,2 @@
 # Scaffolder
-This is a CLI C# application used for scaffolding files like Controllers, Service, EFConfig flies, Dto, and so on
+This is a C# CLI application used for scaffolding files like Controllers, Service, EFConfig flies, Dto, and so on
