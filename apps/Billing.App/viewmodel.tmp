@@ -1,0 +1,10 @@
+using System;
+using System.Collections.Generic;
+
+namespace @-Namespace-@
+{
+    public class @-Model-@Dto : Base.Properties
+    {
+        @-Prop-@
+    }
+}

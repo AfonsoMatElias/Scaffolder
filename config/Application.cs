@@ -13,6 +13,8 @@ namespace Scaffolder
     {
         private string configFilePath;
 
+        public string CurrentDirectory { get; set; }
+        
         public string Name { get; set; }
         public string Version { get; set; }
         public IDictionary<string, dynamic> Applications { get; set; }
@@ -25,7 +27,11 @@ namespace Scaffolder
 
         public Application(string configFilePath = "config.json")
         {
-            this.configFilePath = configFilePath;
+            configFilePath = configFilePath ?? "config.json";
+
+            this.CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            this.configFilePath = Path.Combine(this.CurrentDirectory, configFilePath);
+
             Instance = this;
         }
 
@@ -132,7 +138,7 @@ namespace Scaffolder
                                 new {
                                     Tail = "Controller",
                                     Output = $"{ typedLine }/Controllers/Api",
-                                    Template = "controller.txt"
+                                    Template = "controller.tmp"
                                 }
                             },
 
@@ -140,7 +146,7 @@ namespace Scaffolder
                                 new {
                                     Tail = "Service",
                                     Output = $"{ typedLine }/Services",
-                                    Template = "service.txt"
+                                    Template = "service.tmp"
                                 }
                             },
 
@@ -148,7 +154,7 @@ namespace Scaffolder
                                 new {
                                     Tail = "Dto",
                                     Output = $"{ typedLine }/Dto",
-                                    Template = "viewmodel.txt",
+                                    Template = "viewmodel.tmp",
                                     Namespace = $"{ typedLine }",
                                 }
                             },
@@ -157,7 +163,7 @@ namespace Scaffolder
                                 new {
                                     Tail = "Config",
                                     Output = $"{ typedLine }/Data",
-                                    Template = "efconfig.txt"
+                                    Template = "efconfig.tmp"
                                 }
                             }
                     }
@@ -183,7 +189,7 @@ namespace Scaffolder
                 Logger.Log("");
                 Logger.Log($"({ typedLine }|Blue) Config Added to (config.json|Yellow), please open it, configure it " +
                     "and add all the missing templates according to the new project classes. \nPlease add: ");
-                Logger.Warn($"controller.txt, efconfig.txt, viewmodel.txt and service.txt");
+                Logger.Warn($"controller.tmp, efconfig.tmp, viewmodel.tmp and service.tmp");
 
                 Logger.Log("\nAfter every change type any key to reload the configurations...");
                 Console.ReadKey();
@@ -212,8 +218,8 @@ namespace Scaffolder
                 File.WriteAllText(configFilePath, content);
             }
 
-            var config = JsonConvert.DeserializeObject<Application>(File.ReadAllText(configFilePath));
-
+            var configContent = File.ReadAllText(configFilePath);
+            var config = JsonConvert.DeserializeObject<Application>(configContent);
             var applicationType = typeof(Application);
 
             // Setting all the values in the main object
@@ -226,8 +232,6 @@ namespace Scaffolder
                     // Setting it to the destination
                     item.SetValue(this, value);
                 });
-
-            
 
             Logger.Done("Configurations successfuly loaded.");
             Thread.Sleep(500);

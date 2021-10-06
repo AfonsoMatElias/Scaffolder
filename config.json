@@ -13,24 +13,24 @@
         "Controller": [{
           "Trailer": "Controller",
           "Output": "Billing.App/Controllers/Api",
-          "Template": "controller.txt"
+          "Template": "controller.tmp"
         }],
         "Service": [{
             "Trailer": "Service",
             "Output": "Billing.Service/Services/Implementations",
-            "Template": "service.txt"
+            "Template": "service.tmp"
           },
           {
             "Header": "I",
             "Trailer": "Service",
             "Output": "Billing.Service/Services/Interfaces",
-            "Template": "iservice.txt"
+            "Template": "iservice.tmp"
           }
         ],
         "ViewModel": [{
           "Trailer": "Dto",
           "Output": "Billing.Service/Dto",
-          "Template": "viewmodel.txt",
+          "Template": "viewmodel.tmp",
           "Namespace": "Billing.Service.Dto",
           "AditionalsProperties": [
             "public string uid { get; set; }"
@@ -39,7 +39,7 @@
         "EFCore": [{
           "Trailer": "Config",
           "Output": "Billing.Service/Data",
-          "Template": "efconfig.txt"
+          "Template": "efconfig.tmp"
         }]
       }
 

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -9,7 +7,11 @@ namespace Scaffolder
     public class Project : OptionSelector
     {
         public string AppName { get; set; }
-        public string AppPath { get; set; }
+        private string mAppPath;
+        public string AppPath { 
+            get => mAppPath; 
+            set => mAppPath = Shared.PathNormalizer(value);
+        }
 
         public dynamic Scaffolders { get; set; }
 

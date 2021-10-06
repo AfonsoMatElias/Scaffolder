@@ -16,7 +16,7 @@ namespace Scaffolder.Models
         public string Template
         {
             get => mTemplate;
-            set => mTemplate = Path.Combine("apps", Application.GetSelectedProject.AppName, value);
+            set => mTemplate = Path.Combine(Application.Instance.CurrentDirectory, "apps", Application.GetSelectedProject.AppName, value);
         }
 
         // For Models Scaffold
