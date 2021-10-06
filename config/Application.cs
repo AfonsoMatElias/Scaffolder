@@ -67,7 +67,7 @@ namespace Scaffolder
 
                 // Instantiating the scaffolder class chosed
                 var @class = Activator.CreateInstance(type);
-                type.GetMethod("Init").Invoke(@class, null);
+                type.GetMethod("Init")?.Invoke(@class, null);
 
                 Shared.Pause();
             }
@@ -235,7 +235,7 @@ namespace Scaffolder
 
             Logger.Done("Configurations successfuly loaded.");
             Thread.Sleep(500);
-            System.Console.Clear();
+            Console.Clear();
 
             return this;
         }

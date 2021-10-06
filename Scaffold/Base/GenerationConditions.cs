@@ -29,13 +29,13 @@ namespace Scaffolder.Scaffold
                         YesForAll = true;
                         return true;
                     case "n":
-                        Logger.Warn($"WARMING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
+                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
                         return false;
                     case "na":
                         NoForAll = true;
                         return false;
                     default:
-                        Logger.Warn($"WARMING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
+                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
                         return false;
                 }
             }

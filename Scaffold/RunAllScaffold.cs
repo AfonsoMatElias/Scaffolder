@@ -69,8 +69,6 @@ namespace Scaffolder.Scaffold
                     }
                 });
             });
-
-            Shared.Pause();
         }
     }
 }
