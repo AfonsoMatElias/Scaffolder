@@ -14,13 +14,12 @@ namespace Scaffolder
         private string configFilePath;
 
         public string CurrentDirectory { get; set; }
-        
+
         public string Name { get; set; }
         public string Version { get; set; }
         public IDictionary<string, dynamic> Applications { get; set; }
 
         public Project SelectedProject { get; internal set; }
-        public static Project GetSelectedProject { get; internal set; }
 
         public static Application Instance;
 
@@ -34,8 +33,6 @@ namespace Scaffolder
 
             Instance = this;
         }
-
-
         public void Run()
         {
         Init:
@@ -44,7 +41,7 @@ namespace Scaffolder
 
             // Loading the project
             this.SelectedProject = this.GetProject(selectedAppName);
-            GetSelectedProject = this.SelectedProject;
+            Application.Instance.SelectedProject = this.SelectedProject;
 
 
         Beginning:
@@ -54,7 +51,7 @@ namespace Scaffolder
 
             try
             {
-                if (selectedOption == "Exit") 
+                if (selectedOption == "Exit")
                 {
                     Console.Clear();
                     goto Init;

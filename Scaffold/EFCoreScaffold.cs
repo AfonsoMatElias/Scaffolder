@@ -27,7 +27,7 @@ namespace Scaffolder.Scaffold
 
         public EFCoreScaffold()
         {
-            this.Scaffolders = Application.GetSelectedProject.GetScaffolders();
+            this.Scaffolders = Application.Instance.SelectedProject.GetScaffolders();
             this.name = this.GetType().Name.Replace("Scaffold", "");
             this.configs = this.Scaffolders.Get(this.name);
         }
@@ -144,7 +144,7 @@ namespace Scaffolder.Scaffold
             Logger.Log(
                 string.Join(" -> ", new[] {
                     $"Project",
-                    $"({ Application.GetSelectedProject.AppName }|Yellow)",
+                    $"({ Application.Instance.SelectedProject.AppName }|Yellow)",
                     $"({ this.name }|Yellow)"
                 })
             );

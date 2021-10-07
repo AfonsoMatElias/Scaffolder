@@ -22,7 +22,7 @@ namespace Scaffolder.Scaffold
             Logger.Log(
                 string.Join(" -> ", new[] {
                     $"Project",
-                    $"({ Application.GetSelectedProject.AppName }|Yellow)",
+                    $"({ Application.Instance.SelectedProject.AppName }|Yellow)",
                     $"({ this.name }|Yellow)"
                 })
             );
@@ -34,7 +34,7 @@ namespace Scaffolder.Scaffold
 
             name.Split(",").Select(s => s.Trim()).ToList().ForEach(model =>
             {
-                var scaffolder = Application.GetSelectedProject.GetScaffolders();
+                var scaffolder = Application.Instance.SelectedProject.GetScaffolders();
                 
                 // Essential
                 if (!scaffolder.ModelExists(model)) return;

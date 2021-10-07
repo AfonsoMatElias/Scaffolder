@@ -16,7 +16,7 @@ namespace Scaffolder
             // Adding the root path to the collection
             var path = new System.Collections.Generic.List<string>
             {
-                Application.GetSelectedProject.AppPath
+                Application.Instance.SelectedProject.AppPath
             };
 
             // Adding the remain path to the list
