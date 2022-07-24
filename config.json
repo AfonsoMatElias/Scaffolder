@@ -84,7 +84,7 @@
             "Trailer": "Dto",
             "Output": "SeguroSaude.Service/Dto",
             "Template": "viewmodel.tmp",
-            "Namespace": "SeguroSaude"
+            "Namespace": "SeguroSaude.Service.Dto"
           }
         ],
         "EFCore": [
