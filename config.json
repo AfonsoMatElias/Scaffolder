@@ -1,21 +1,25 @@
 {
+  "CurrentDirectory": "/mnt/E64D00274CFFEFE3/dev/dotnet/Scaffolder/bin/release/net5.0/publish",
   "Name": "Scaffolder",
   "Version": "1.1.0",
   "Applications": {
     "Billing.App": {
-
       "AppPath": "C:/dev/dotnet/billing.app/",
-
       "Scaffolders": {
-        "Models": [{
-          "DbModels": "Billing.Service/Models"
-        }],
-        "Controller": [{
-          "Trailer": "Controller",
-          "Output": "Billing.App/Controllers/Api",
-          "Template": "controller.tmp"
-        }],
-        "Service": [{
+        "Models": [
+          {
+            "DbModels": "Billing.Service/Models"
+          }
+        ],
+        "Controller": [
+          {
+            "Trailer": "Controller",
+            "Output": "Billing.App/Controllers/Api",
+            "Template": "controller.tmp"
+          }
+        ],
+        "Service": [
+          {
             "Trailer": "Service",
             "Output": "Billing.Service/Services/Implementations",
             "Template": "service.tmp"
@@ -27,22 +31,71 @@
             "Template": "iservice.tmp"
           }
         ],
-        "ViewModel": [{
-          "Trailer": "Dto",
-          "Output": "Billing.Service/Dto",
-          "Template": "viewmodel.tmp",
-          "Namespace": "Billing.Service.Dto",
-          "AditionalsProperties": [
-            "public string uid { get; set; }"
-          ]
-        }],
-        "EFCore": [{
-          "Trailer": "Config",
-          "Output": "Billing.Service/Data",
-          "Template": "efconfig.tmp"
-        }]
+        "ViewModel": [
+          {
+            "Trailer": "Dto",
+            "Output": "Billing.Service/Dto",
+            "Template": "viewmodel.tmp",
+            "Namespace": "Billing.Service.Dto",
+            "AditionalsProperties": [
+              "public string uid { get; set; }"
+            ]
+          }
+        ],
+        "EFCore": [
+          {
+            "Trailer": "Config",
+            "Output": "Billing.Service/Data",
+            "Template": "efconfig.tmp"
+          }
+        ]
       }
-
+    },
+    "SeguroSaude": {
+      "AppPath": "/mnt/E64D00274CFFEFE3/dev/agt/dotnet/SeguroSaude/",
+      "Scaffolders": {
+        "Models": [
+          {
+            "DbModels": "SeguroSaude.Service/Models"
+          }
+        ],
+        "Controller": [
+          {
+            "Trailer": "Controller",
+            "Output": "SeguroSaude.Api/Controllers",
+            "Template": "controller.tmp"
+          }
+        ],
+        "Service": [
+          {
+            "Trailer": "Service",
+            "Output": "SeguroSaude.Service/Services/Implementations",
+            "Template": "service.tmp"
+          },
+          {
+            "Header": "I",
+            "Trailer": "Service",
+            "Output": "SeguroSaude.Service/Services/Interfaces",
+            "Template": "iservice.tmp"
+          }
+        ],
+        "ViewModel": [
+          {
+            "Trailer": "Dto",
+            "Output": "SeguroSaude.Service/Dto",
+            "Template": "viewmodel.tmp",
+            "Namespace": "SeguroSaude"
+          }
+        ],
+        "EFCore": [
+          {
+            "Trailer": "Config",
+            "Output": "SeguroSaude.Service/Data",
+            "Template": "efconfig.tmp"
+          }
+        ]
+      }
     }
-  }
+  },
+  "SelectedProject": null
 }
