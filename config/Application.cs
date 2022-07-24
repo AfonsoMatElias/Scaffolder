@@ -133,7 +133,7 @@ namespace Scaffolder
 
                         Controller = new[]{
                                 new {
-                                    Tail = "Controller",
+                                    Trailer = "Controller",
                                     Output = $"{ typedLine }/Controllers/Api",
                                     Template = "controller.tmp"
                                 }
@@ -141,7 +141,7 @@ namespace Scaffolder
 
                         Service = new[]{
                                 new {
-                                    Tail = "Service",
+                                    Trailer = "Service",
                                     Output = $"{ typedLine }/Services",
                                     Template = "service.tmp"
                                 }
@@ -149,7 +149,7 @@ namespace Scaffolder
 
                         ViewModel = new[]{
                                 new {
-                                    Tail = "Dto",
+                                    Trailer = "Dto",
                                     Output = $"{ typedLine }/Dto",
                                     Template = "viewmodel.tmp",
                                     Namespace = $"{ typedLine }",
@@ -158,7 +158,7 @@ namespace Scaffolder
 
                         EFCore = new[] {
                                 new {
-                                    Tail = "Config",
+                                    Trailer = "Config",
                                     Output = $"{ typedLine }/Data",
                                     Template = "efconfig.tmp"
                                 }
