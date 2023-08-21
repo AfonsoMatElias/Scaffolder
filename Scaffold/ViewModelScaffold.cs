@@ -12,7 +12,6 @@ namespace Scaffolder.Scaffold
         public Scaffolders Scaffolders { get; set; }
         public List<Configuration> configs { get; set; }
 
-        private string template = null;
         private string name;
 
         public ViewModelScaffold()
@@ -30,7 +29,7 @@ namespace Scaffolder.Scaffold
                 configs.ForEach(cf => this.Generate(m, cf));
             }
 
-            if (!name.Contains(","))
+            if (!name.Contains(','))
                 exec(name);
             else
                 name.Split(",").Select(s => s.Trim()).ToList().ForEach(m =>
@@ -44,8 +43,6 @@ namespace Scaffolder.Scaffold
 
         public void Generate(string name, Configuration config)
         {
-            this.template = Shared.LoadTemplate(this.template, config, this.configs.Count);
-
             try
             {
                 var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.cs");
@@ -55,54 +52,71 @@ namespace Scaffolder.Scaffold
 
                 // Getting the model name and path
                 var model = this.Scaffolders.Models.FirstOrDefault(x => x.Name == name);
-                // Reading the file by lines
-                var mTemplate = this.template.Replace("@-Namespace-@", config.Namespace)
-                                             .Replace("@-Model-@", model.Name);
 
-                // Extracting properties in the model
-                var properties = Shared.GetModelProperties(model.Path);
+                var modelLines = Shared.GetModelLines(model.Path);
+                var dtoLines = new List<string>();
 
-                var identation = "\n        ";
-                var propIndetifier = "@-Prop-@";
-
-                // Creating the template value setter function
-                void setter(string value)
-                    => mTemplate = mTemplate.Replace(propIndetifier, $"{identation}{value}{propIndetifier}");
-
-                // Adding the extra fields
-                config.AditionalsProperties?
-                    .ToList()
-                    .ForEach(item => setter(item));
-
-                for (int i = 1; i <= properties.Count; i++)
+                for (int i = 0; i < modelLines.Count; i++)
                 {
-                    // Getting the line
-                    var line = properties.ElementAt(i - 1).Trim();
+                    var line = modelLines[i];
 
-                    // Changing the model property type
-                    if (line.Contains(" virtual "))
+                    // if namespace
+                    if (line.StartsWith("namespace "))
                     {
-                        var mLine = line.Trim();
-                        var lineSplited = mLine.Split(" ");
-                        var type = lineSplited[2];
+                        var @namespace = config.Namespace;
+                        if (string.IsNullOrEmpty(@namespace))
+                            @namespace = config.OriginalOutput.Replace("/", ".").Replace("\\", ".");
 
-                        if (type.StartsWith(nameof(ICollection)))
-                        {
-                            type = type.Replace(nameof(ICollection) + "<", "").Replace(">", "");
-                            lineSplited[2] = $"{nameof(IEnumerable)}<{type}Dto>";
-                        }
-                        else
-                        {
-                            lineSplited[2] = $"{type}Dto";
-                        }
-
-                        line = string.Join(" ", lineSplited);
+                        // namespace {ABC}
+                        line = Shared.StringReplacer(line, "namespace", @namespace, 1);
+                        dtoLines.Add(line);
+                        continue;
                     }
 
-                    setter(line);
+                    // if Class
+                    if (line.Contains("class "))
+                    {
+                        line = Shared.StringReplacer(line, "class", $"{model.Name}Dto", 1);
+                        dtoLines.Add(line);
+                        continue;
+                    }
+
+                    // if virtual
+                    if (line.Contains(" virtual "))
+                    {
+                        var buildProperty = Shared.BuildProperty(line);
+                        var type = buildProperty.Type;
+
+                        if (line.Contains(nameof(ICollection)))
+                            line = Shared.StringReplacer(line, "virtual", $"{nameof(IEnumerable)}<{type.Replace(nameof(ICollection) + "<", "").Replace(">", "")}Dto>", 1, true);
+                        else
+                            line = Shared.StringReplacer(line, "virtual", $"{type}Dto", 1);
+
+                        dtoLines.Add(line);
+                        continue;
+                    }
+
+                    // Check models in line
+                    // 1º Check
+                    var modelInLine = Scaffolders.Models.FirstOrDefault(x => line.Contains($"<{x.Name}>"));
+
+                    if (modelInLine != null)
+                        line = line.Replace($"<{modelInLine.Name}>", $"<{modelInLine.Name}Dto>");
+                    else
+                    // 2º Check
+                    if ((modelInLine = Scaffolders.Models.FirstOrDefault(x => line.Contains($" {x.Name} "))) != null)
+                        line = line.Replace($" {modelInLine.Name} ", $" {modelInLine.Name}Dto ");
+
+
+                    // Applying the replacers
+                    config.Replacers.ForEach(x => line = line.Replace(x.CurrentValue, x.NewValue));
+                    
+                    dtoLines.Add(line);
                 }
 
-                File.WriteAllText(filePath, mTemplate.Replace(propIndetifier, ""));
+                // Reading the file by lines
+                var mTemplate = String.Join("\n", dtoLines);
+                File.WriteAllText(filePath, mTemplate);
                 Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
             }
             catch (Exception ex)

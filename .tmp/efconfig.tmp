@@ -3,15 +3,30 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using @-Namespace-@.Services;
 using @-Namespace-@.Models;
 
 namespace @-Namespace-@.Data.Configurations
 {
-    public class @-Model-@Config : IEntityTypeConfiguration<@-Model-@>
+    public class @-Model-@Config : BaseEntityTypeConfig<@-Model-@>
     {
-        public void Configure(EntityTypeBuilder<@-Model-@> builder)
+        public override void Configure(EntityTypeBuilder<@-Model-@> builder)
         {
             @-Prop-@
-        }
+
+			builder.HasData(TableData());
+		}
+
+		private @-Model-@[] TableData()
+		{
+			return base.LoadSeed(nameof(@-Model-@)).Select((item, index) =>
+			{
+				return new @-Model-@
+				{
+					Id = (index + 1),
+					CreatedAt = DateTime.Now,
+				};
+			}).ToArray();
+		}
     }
 }

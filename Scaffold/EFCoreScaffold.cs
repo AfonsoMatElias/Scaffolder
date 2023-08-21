@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using Scaffolder.Models;
 
 namespace Scaffolder.Scaffold
@@ -13,17 +14,6 @@ namespace Scaffolder.Scaffold
 
 		private string template = null;
 		private string name;
-
-		// Aditionals configuration according to the the type of property
-		private Dictionary<string, string[]> typeAditionals = new Dictionary<string, string[]>
-		{
-			{
-				"string", new[] { ".HasMaxLength(200)", }
-			},
-			{
-				"decimal", new[] { ".HasPrecision(18, 2)", }
-			}
-		};
 
 		public EFCoreScaffold()
 		{
@@ -40,7 +30,7 @@ namespace Scaffolder.Scaffold
 				configs.ForEach(cf => this.Generate(m, cf));
 			}
 
-			if (!name.Contains(","))
+			if (!name.Contains(','))
 				exec(name);
 			else
 				name.Split(",").Select(s => s.Trim()).ToList().ForEach(m =>
@@ -54,7 +44,9 @@ namespace Scaffolder.Scaffold
 
 		public void Generate(string name, Configuration config)
 		{
-			this.template = Shared.LoadTemplate(this.template, config, this.configs.Count);
+			// this.template = Shared.LoadTemplate(this.template, config, this.configs.Count);
+			var templateLines = Shared.LoadTemplateLines(this.template, config, this.configs.Count);
+			var mappedModels = Scaffolders.Models.ToDictionary(x => x.Name, x => x);
 
 			try
 			{
@@ -64,70 +56,85 @@ namespace Scaffolder.Scaffold
 					return;
 
 				// Getting the model name and path
-				var model = this.Scaffolders.Models.FirstOrDefault(x => x.Name == name);
-				// Reading the file by lines
-				var mTemplate = this.template.Replace("@-Model-@", model.Name);
+				var model = mappedModels.Get(name);
 
 				var properties = Shared.GetModelProperties(model.Path);
+				var lastLine = properties.LastOrDefault();
 
-				var identation = "\n            ";
-				var propIndetifier = "@-Prop-@";
-
-				void setter(string value)
-					=> mTemplate = mTemplate.Replace(propIndetifier, $"{identation}{value}{propIndetifier}");
-
-				string propertyBuilder(string propType, string propName)
+				templateLines = templateLines.Select(templateLine =>
 				{
-					var ads = new List<string>() { "" };
-					if (typeAditionals.ContainsKey(propType))
-						ads.AddRange(typeAditionals[propType]);
 
-					return $"builder.Property(e => e.@-Name-@)@-Aditional-@{identation + "       "}.IsRequired(false);\n"
-						.Replace("@-Name-@", propName)
-						.Replace("@-Aditional-@", string.Join(identation + "       ", ads));
-				}
+					if (!templateLine.Contains("@-Prop-@"))
+						return templateLine;
 
-				string virtualPropertyBuilder(string propType, string propName)
-				{
-					var ads = new List<string>() { "" };
-					if (typeAditionals.ContainsKey(propType))
-						ads.AddRange(typeAditionals[propType]);
+					var configPropLines = new List<string>();
 
-					return $"builder.HasOne(e => e.{propName})" +
-						 string.Join(identation + "       ", new string[] {
-							 $".WithMany(e => e.{ name }s)",
-							 $".HasForeignKey(e => e.{ propName }Id)",
-							  ".OnDelete(DeleteBehavior.NoAction);"
-						 });
-				}
-
-				var count = properties.Count();
-				for (int i = 1; i <= count; i++)
-				{
-					// Getting the line
-					var line = properties.ElementAt(i - 1).Trim();
-					var lineSplited = line.Split(" ");
-
-					var propName = lineSplited[2];
-					var propType = lineSplited[1];
-
-					// Skiping the virtual properties
-					if (line.Contains(" virtual "))
+					void addExtraLine(string propLine)
 					{
-						propName = lineSplited[2 + 1];
-						propType = lineSplited[1 + 1];
-
-						if (propType.Contains("ICollection"))
-							continue;
-
-						setter(virtualPropertyBuilder(propType, propName));
-						continue;
+						if (lastLine != propLine)
+							configPropLines.Add(templateLine.Replace("@-Prop-@", ""));
 					}
 
-					setter(propertyBuilder(propType, propName));
-				}
+					properties.ForEach(propLine =>
+					{
+						var builtProperty = Shared.BuildProperty(propLine);
+						if (builtProperty.IsVirtual && (mappedModels.ContainsKey(builtProperty.Type) || mappedModels.ContainsKey(builtProperty.ParameterType)))
+						{
+							// Relations
+							var isCollection = propLine.Contains("ICollection") || propLine.Contains("IEnumerable");
 
-				File.WriteAllText(filePath, mTemplate.Replace(propIndetifier, ""));
+							if (!isCollection)
+							{ // One To Many
+								var defaultRelationOne = "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);";
+								var relationalPropBuilder = config.Builders.Get("Relation:One") ?? defaultRelationOne;
+								var configuredRelationLine = relationalPropBuilder.Replace("@-Name-@", builtProperty.Name)
+																				.Replace("@-Model-@", model.Name)
+																				.Replace("@-Relation-@", builtProperty.Type);
+								if (!string.IsNullOrEmpty(configuredRelationLine))
+								{
+									configPropLines.Add(templateLine.Replace("@-Prop-@", configuredRelationLine));
+									addExtraLine(propLine);
+									return;
+								}
+							}
+							else
+							{ // Many to One
+								var relationalPropBuilder = config.Builders.Get("Relation:Many") ?? "";
+								var configuredRelationLine = relationalPropBuilder.Replace("@-Name-@", builtProperty.Name)
+																				.Replace("@-Model-@", model.Name)
+																				.Replace("@-Relation-@", builtProperty.Name);
+								
+								if (!string.IsNullOrEmpty(configuredRelationLine))
+								{
+									configPropLines.Add(templateLine.Replace("@-Prop-@", configuredRelationLine));
+									addExtraLine(propLine);
+									return;
+								}
+							}
+
+							return;
+						}
+
+						// Getting the config if exists
+						var propBuilder = config.Builders.Get("Property:" + builtProperty.Type) ??
+																config.Builders.Get("Property") ??
+																"builder.Property(e => e.@-Name-@).IsRequired(false);";
+
+						// Replacing the Keys
+						var configuredLine = propBuilder.Replace("@-Name-@", builtProperty.Name)
+								   .Replace("@-Model-@", model.Name);
+
+						// Adding the configured line
+						configPropLines.Add(templateLine.Replace("@-Prop-@", configuredLine));
+
+						addExtraLine(propLine);
+					});
+
+					return string.Join(Environment.NewLine, configPropLines);
+				}).ToList();
+
+				File.WriteAllText(filePath, string.Join(Environment.NewLine, templateLines)
+					.Replace("@-Model-@", model.Name));
 				Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
 			}
 			catch (Exception ex)
@@ -180,9 +187,9 @@ namespace Scaffolder.Scaffold
 					})) +
 					"\n}";
 
-                    Console.WriteLine(dbContext);
-					
-                    Shared.Pause();
+					Console.WriteLine(dbContext);
+
+					Shared.Pause();
 					break;
 
 				case EFCoreScaffoldGenerationOptions.Exit:

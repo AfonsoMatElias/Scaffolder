@@ -151,7 +151,6 @@ namespace Scaffolder
                                 new {
                                     Trailer = "Dto",
                                     Output = $"{ typedLine }/Dto",
-                                    Template = "viewmodel.tmp",
                                     Namespace = $"{ typedLine }",
                                 }
                             },

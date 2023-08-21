@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Scaffolder.Models;
 
 namespace Scaffolder
@@ -85,14 +86,23 @@ namespace Scaffolder
 			return Shared.KeyConverter<T>();
 		}
 
+		public static List<string> LoadTemplateLines(string templ, Configuration config, int count)
+		{
+			List<string> data = new List<string>();
+			if (File.Exists(config.Template) && templ == null)
+				data = File.ReadAllLines(config.Template).ToList();
+			else if (count > 1)
+				data = File.ReadAllLines(config.Template).ToList();
+
+			if (data == null && templ != null)
+				data = templ.Split("\n").ToList();
+
+			return data;
+		}
+
 		public static string LoadTemplate(string templ, Configuration config, int count)
 		{
-			if (File.Exists(config.Template) && templ == null)
-				templ = File.ReadAllText(config.Template);
-			else if (count > 1)
-				templ = File.ReadAllText(config.Template);
-
-			return templ;
+			return string.Join("\n", LoadTemplateLines(templ, config, count));
 		}
 
 		public static List<string> GetModelProperties(string filePath)
@@ -102,15 +112,64 @@ namespace Scaffolder
 					   .ToList();
 		}
 
+		public static List<string> GetModelLines(string filePath)
+		{
+			return File.ReadAllLines(filePath).ToList();
+		}
+
+		public static string StringReplacer(string line, string wordToFind, string wordToReplace, int position = 0, bool isContain = false)
+		{
+			var words = line.Split(" ")
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.ToList().ToList();
+
+			var index = -1;
+			if (isContain)
+				index = words.FindIndex(w => w.Contains(wordToFind));
+			else
+				index = words.IndexOf(wordToFind);
+
+			if (words.Count >= index + position)
+				words[index + position] = wordToReplace;
+
+			return String.Join(" ", words);
+		}
+
+		public static PropStructure BuildProperty(string line)
+		{
+			// public string Designacao { get; set; }
+			// public ICollection<Curso> Cursos { get; set; }
+
+			var parts = line.Trim().Replace(" virtual ", " ").Split(" ").Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+			return new PropStructure
+			{
+				IsVirtual = line.Contains(" virtual "),
+				Modifier = parts.ElementAt(0),
+				Type = parts.ElementAt(1),
+				ParameterType = new Regex("<(.*?)>").Match(parts.ElementAt(1)).Groups.Values.LastOrDefault()?.Value,
+				Name = parts.ElementAt(2),
+			};
+		}
+
 		public static void Pause()
 		{
 			Logger.Log("\nPress any key on keyboard to continue...");
 			Console.ReadKey();
 		}
 
-        public static string ResolvePath(string path) 
-        {
-            return (OperatingSystem.IsWindows() ? path : ("/" + path));
-        }
+		public static string ResolvePath(string path)
+		{
+			return (OperatingSystem.IsWindows() ? path : ("/" + path));
+		}
+	}
+
+	public class PropStructure
+	{
+		public bool IsVirtual { get; set; }
+		public string Modifier { get; set; }
+		public string Type { get; set; }
+		public string ParameterType { get; set; }
+		public string Name { get; set; }
 	}
 }

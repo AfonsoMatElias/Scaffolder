@@ -19,13 +19,20 @@ namespace Scaffolder
 			var dbModelsPath = Shared.ResolvePath(this.Get("Models")?.FirstOrDefault().DbModels);
 
 			// Loading the models
-			this.Models = Directory.GetFiles(dbModelsPath).Select(s =>
+			this.Models = Directory.GetFiles(dbModelsPath).Select(filePath =>
 			{
-				var fileInfo = new FileInfo(s);
+				var lineSplitted = File.ReadAllLines(filePath)
+					.FirstOrDefault(x => x.Contains("class "))
+					.Split(" ")
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.ToList();
+
+				var className = lineSplitted.ElementAt(lineSplitted.IndexOf("class") + 1);
+
 				return new DbModels
 				{
-					Name = fileInfo.Name.Replace(".cs", ""),
-					Path = fileInfo.FullName
+					Name = className,
+					Path = filePath
 				};
 			}).ToList();
 		}

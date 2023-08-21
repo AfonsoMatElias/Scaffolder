@@ -1,10 +1,9 @@
 {
-  "CurrentDirectory": "/mnt/E64D00274CFFEFE3/dev/dotnet/Scaffolder/bin/release/net5.0/publish",
   "Name": "Scaffolder",
   "Version": "1.1.0",
   "Applications": {
     "Billing.App": {
-      "AppPath": "C:/dev/dotnet/billing.app/",
+      "AppPath": "/mnt/E64D00274CFFEFE3/dev/dotnet/billing.app/",
       "Scaffolders": {
         "Models": [
           {
@@ -46,7 +45,12 @@
           {
             "Trailer": "Config",
             "Output": "Billing.Service/Data",
-            "Template": "efconfig.tmp"
+            "Template": "efconfig.tmp",
+            "Builders": {
+              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired()",
+              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);",
+              "Relation:Many": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
+            }
           }
         ]
       }
@@ -91,7 +95,66 @@
           {
             "Trailer": "Config",
             "Output": "SeguroSaude.Service/Data",
-            "Template": "efconfig.tmp"
+            "Template": "efconfig.tmp",
+            "Builders": {
+              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",
+              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);",
+              "Relation:Many": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
+            }
+          }
+        ]
+      }
+    },
+    "Agt.Concurso.Drh.Perfil": {
+      "AppPath": "/mnt/F868BF7668BF326C/dev/agt/dotnet/Agt.Concurso.Drh/Agt.Concurso.Drh.Perfil",
+      "Scaffolders": {
+        "Models": [
+          {
+            "DbModels": "Agt.Concurso.Drh.Perfil.Service/Models"
+          }
+        ],
+        "Controller": [
+          {
+            "Trailer": "Controller",
+            "Output": "SeguroSaude.Api/Controllers",
+            "Template": "controller.tmp"
+          }
+        ],
+        "Service": [
+          {
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.Perfil.Service/Services/Implementations",
+            "Template": "service.tmp"
+          },
+          {
+            "Header": "I",
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.Perfil.Service/Services/Interfaces",
+            "Template": "iservice.tmp"
+          }
+        ],
+        "ViewModel": [
+          {
+            "Trailer": "Dto",
+            "Output": "Agt.Concurso.Drh.Perfil.Service/Dto",
+            "Namespace": "Agt.Concurso.Drh.Perfil.Service.Dto",
+            "Replacers": [
+              {
+                "CurrentValue": "Agt.Concurso.Drh.Shared.Models.Db",
+                "NewValue": "Agt.Concurso.Drh.Shared.Models.Dto"
+              }
+            ]
+          }
+        ],
+        "EFCore": [
+          {
+            "Trailer": "Config",
+            "Output": "Agt.Concurso.Drh.Perfil.Service/Data",
+            "Template": "efconfig.tmp",
+            "Builders": {
+              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",
+              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
+            }
           }
         ]
       }

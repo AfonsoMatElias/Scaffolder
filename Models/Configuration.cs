@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 
 namespace Scaffolder.Models
@@ -8,9 +9,12 @@ namespace Scaffolder.Models
         public string Header { get; set; }
         public string Trailer { get; set; }
         public string Namespace { get; set; }
+        public string OriginalOutput { get; set; }
+
 
         private string mOutput;
-        public string Output { get => mOutput; set => mOutput = Shared.PathNormalizer(value); }
+        public string Output { get => mOutput; set => mOutput = Shared.PathNormalizer(OriginalOutput = value); }
+
 
         private string mTemplate;
         public string Template
@@ -20,11 +24,19 @@ namespace Scaffolder.Models
         }
 
         // For Models Scaffold
+
         private string mDbModels;
         public string DbModels { get => mDbModels; set => mDbModels = Shared.PathNormalizer(value); }
 
-        public string[] AditionalsProperties { get; set; }
-        
+        public List<string> AditionalsProperties { get; set; }
+        public List<Replacer> Replacers { get; set; } = new List<Replacer>();
+        public IDictionary<string, string> Builders { get; set; } = new Dictionary<string, string>();
 
+    }
+
+    public class Replacer
+    {
+        public string CurrentValue { get; set; }
+        public string NewValue { get; set; }
     }
 }
