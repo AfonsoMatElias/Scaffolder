@@ -86,7 +86,7 @@ namespace Scaffolder.Scaffold
 			{
 				case GenerationOptions.One_By_One:
 					Logger.Log("\nType the Class Name: ");
-					var name = Console.ReadLine();
+					var name = Logger.ReadLine(this.Scaffolders.Models.Select(x => x.Name).ToArray());
 
 					this.Run(name);
 					Shared.Pause();

@@ -93,7 +93,7 @@ namespace Scaffolder
             Logger.ILog("Choose an option above: ");
 
             // Reading the selected option
-            var typedKey = Console.ReadKey().KeyChar;
+            var typedKey = Logger.ReadKey().KeyChar;
             Logger.Log(""); // Giving some space
 
             // If invalid
@@ -106,7 +106,7 @@ namespace Scaffolder
             if (selectedOptionIndex == 0)
             {
                 Logger.ILog($"Type App Name: ");
-                var typedLine = Console.ReadLine().Trim();
+                var typedLine = Logger.ReadLine().Trim();
 
                 if (string.IsNullOrEmpty(typedLine))
                 {
@@ -188,7 +188,7 @@ namespace Scaffolder
                 Logger.Warn($"controller.tmp, efconfig.tmp, viewmodel.tmp and service.tmp");
 
                 Logger.Log("\nAfter every change type any key to reload the configurations...");
-                Console.ReadKey();
+                Logger.ReadKey();
                 Logger.Log("");
 
                 this.Init(); // Reloading all the configurations

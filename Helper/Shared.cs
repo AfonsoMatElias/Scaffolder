@@ -43,7 +43,7 @@ namespace Scaffolder
 			Logger.ILog("Choose an option above: ");
 
 			// Reading the selected option
-			var typedKey = Console.ReadKey().KeyChar;
+			var typedKey = Logger.ReadKey().KeyChar;
 			Logger.Log(""); // Giving some space
 
 			return typedKey.ToString();
@@ -52,7 +52,7 @@ namespace Scaffolder
 		public static T KeyConverter<T>() where T : Enum
 		{
 			// Getting the pressed key
-			var op = Console.ReadKey();
+			var op = Logger.ReadKey();
 			Logger.Log(@"");
 
 			try
@@ -62,7 +62,7 @@ namespace Scaffolder
 			catch (Exception ex)
 			{
 				Logger.Error($"Invalid Option!. Error: {ex.Message} ; {ex.InnerException?.Message ?? ""}");
-				Console.ReadKey();
+				Logger.ReadKey();
 				return default(T);
 			}
 		}
@@ -155,7 +155,7 @@ namespace Scaffolder
 		public static void Pause()
 		{
 			Logger.Log("\nPress any key on keyboard to continue...");
-			Console.ReadKey();
+			Logger.ReadKey();
 		}
 
 		public static string ResolvePath(string path)

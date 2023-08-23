@@ -16,6 +16,8 @@ namespace Scaffolder.Scaffold
 
         public RunAllScaffold()
         {
+			this.Scaffolders = Application.Instance.SelectedProject.GetScaffolders();
+
             this.name = "Run All at Once";
             Console.Clear();
 
@@ -30,7 +32,7 @@ namespace Scaffolder.Scaffold
             Logger.Log("");
 
             Logger.Log("\nType the Class Name: ");
-            var name = Console.ReadLine();
+            var name = Logger.ReadLine(this.Scaffolders.Models.Select(x => x.Name).ToArray());
 
             name.Split(",").Select(s => s.Trim()).ToList().ForEach(model =>
             {

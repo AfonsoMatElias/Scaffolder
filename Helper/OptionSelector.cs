@@ -15,7 +15,7 @@ namespace Scaffolder
             Logger.ILog("Choose an option above: ");
 
             // Reading the selected option
-            var typedKey = Console.ReadKey().KeyChar;
+            var typedKey = Logger.ReadKey().KeyChar;
             Logger.Log(""); // Giving some space
 
             return typedKey.ToString();

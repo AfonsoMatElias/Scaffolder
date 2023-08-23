@@ -19,7 +19,7 @@ namespace Scaffolder.Scaffold
                 Logger.Log("");
                 Logger.Warn($"Do you want to remake '{config.Header}{name}{config.Trailer}.cs'?");
                 Logger.Log("[y -> yes, n - no, ya - yes for all, na - no for all]: ");
-                var op = Console.ReadLine();
+                var op = Logger.ReadLine();
                 Logger.Log("");
 
                 switch (op)
