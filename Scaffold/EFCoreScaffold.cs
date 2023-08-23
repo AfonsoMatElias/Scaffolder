@@ -63,6 +63,8 @@ namespace Scaffolder.Scaffold
 
 				templateLines = templateLines.Select(templateLine =>
 				{
+					// Applying already the replacers
+					config.Replacers.ForEach(x => templateLine = templateLine.Replace(x.CurrentValue, x.NewValue));
 
 					if (!templateLine.Contains("@-Prop-@"))
 						return templateLine;
@@ -81,7 +83,7 @@ namespace Scaffolder.Scaffold
 						if (builtProperty.IsVirtual && (mappedModels.ContainsKey(builtProperty.Type) || mappedModels.ContainsKey(builtProperty.ParameterType)))
 						{
 							// Relations
-							var isCollection = propLine.Contains("ICollection") || propLine.Contains("IEnumerable");
+							var isCollection = propLine.Contains("ICollection") || propLine.Contains("IEnumerable") || propLine.Contains("IList") || propLine.Contains("List");
 
 							if (!isCollection)
 							{ // One To Many

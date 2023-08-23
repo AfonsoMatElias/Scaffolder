@@ -54,6 +54,9 @@ namespace Scaffolder.Scaffold
 				if (!this.FileExistenceHandler(filePath, name, config))
 					return;
 
+				// Applying already the replacers
+				config.Replacers.ForEach(x => template = template.Replace(x.CurrentValue, x.NewValue));
+
 				File.WriteAllText(filePath, template.Replace("@-Model-@", name).Replace("@-Namespace-@", config.Namespace));
 				Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
 

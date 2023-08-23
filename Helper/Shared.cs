@@ -119,9 +119,7 @@ namespace Scaffolder
 
 		public static string StringReplacer(string line, string wordToFind, string wordToReplace, int position = 0, bool isContain = false)
 		{
-			var words = line.Split(" ")
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.ToList().ToList();
+			var words = line.Split(" ").ToList().ToList();
 
 			var index = -1;
 			if (isContain)

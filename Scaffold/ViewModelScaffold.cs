@@ -61,6 +61,9 @@ namespace Scaffolder.Scaffold
 				{
 					var line = modelLines[i];
 
+                    // Applying already the replacers
+					config.Replacers.ForEach(x => line = line.Replace(x.CurrentValue, x.NewValue));
+
 					// if namespace
 					if (line.StartsWith("namespace "))
 					{
@@ -107,10 +110,6 @@ namespace Scaffolder.Scaffold
 					// 2º Check
 					if ((modelInLine = Scaffolders.Models.FirstOrDefault(x => line.Contains($" {x.Name} "))) != null)
 						line = line.Replace($" {modelInLine.Name} ", $" {modelInLine.Name}Dto ");
-
-
-					// Applying the replacers
-					config.Replacers.ForEach(x => line = line.Replace(x.CurrentValue, x.NewValue));
 
 					dtoLines.Add(line);
 				}
