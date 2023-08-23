@@ -2,109 +2,6 @@
   "Name": "Scaffolder",
   "Version": "1.1.0",
   "Applications": {
-    "Billing.App": {
-      "AppPath": "/mnt/E64D00274CFFEFE3/dev/dotnet/billing.app/",
-      "Scaffolders": {
-        "Models": [
-          {
-            "DbModels": "Billing.Service/Models"
-          }
-        ],
-        "Controller": [
-          {
-            "Trailer": "Controller",
-            "Output": "Billing.App/Controllers/Api",
-            "Template": "controller.tmp"
-          }
-        ],
-        "Service": [
-          {
-            "Trailer": "Service",
-            "Output": "Billing.Service/Services/Implementations",
-            "Template": "service.tmp"
-          },
-          {
-            "Header": "I",
-            "Trailer": "Service",
-            "Output": "Billing.Service/Services/Interfaces",
-            "Template": "iservice.tmp"
-          }
-        ],
-        "ViewModel": [
-          {
-            "Trailer": "Dto",
-            "Output": "Billing.Service/Dto",
-            "Template": "viewmodel.tmp",
-            "Namespace": "Billing.Service.Dto",
-            "AditionalsProperties": [
-              "public string uid { get; set; }"
-            ]
-          }
-        ],
-        "EFCore": [
-          {
-            "Trailer": "Config",
-            "Output": "Billing.Service/Data",
-            "Template": "efconfig.tmp",
-            "Builders": {
-              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired()",
-              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);",
-              "Relation:Many": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
-            }
-          }
-        ]
-      }
-    },
-    "SeguroSaude": {
-      "AppPath": "/mnt/E64D00274CFFEFE3/dev/agt/dotnet/SeguroSaude/",
-      "Scaffolders": {
-        "Models": [
-          {
-            "DbModels": "SeguroSaude.Service/Models"
-          }
-        ],
-        "Controller": [
-          {
-            "Trailer": "Controller",
-            "Output": "SeguroSaude.Api/Controllers",
-            "Template": "controller.tmp"
-          }
-        ],
-        "Service": [
-          {
-            "Trailer": "Service",
-            "Output": "SeguroSaude.Service/Services/Implementations",
-            "Template": "service.tmp"
-          },
-          {
-            "Header": "I",
-            "Trailer": "Service",
-            "Output": "SeguroSaude.Service/Services/Interfaces",
-            "Template": "iservice.tmp"
-          }
-        ],
-        "ViewModel": [
-          {
-            "Trailer": "Dto",
-            "Output": "SeguroSaude.Service/Dto",
-            "Template": "viewmodel.tmp",
-            "Namespace": "SeguroSaude.Service.Dto"
-          }
-        ],
-        "EFCore": [
-          {
-            "Trailer": "Config",
-            "Output": "SeguroSaude.Service/Data",
-            "Template": "efconfig.tmp",
-            "Builders": {
-              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",
-              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);",
-              "Relation:Many": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
-            }
-          }
-        ]
-      }
-    },
     "Agt.Concurso.Drh.Perfil": {
       "AppPath": "/mnt/F868BF7668BF326C/dev/agt/dotnet/Agt.Concurso.Drh/Agt.Concurso.Drh.Perfil",
       "Scaffolders": {
@@ -116,7 +13,7 @@
         "Controller": [
           {
             "Trailer": "Controller",
-            "Output": "SeguroSaude.Api/Controllers",
+            "Output": "Agt.Concurso.Drh.Perfil.Api/Controllers",
             "Template": "controller.tmp"
           }
         ],
@@ -140,8 +37,8 @@
             "Namespace": "Agt.Concurso.Drh.Perfil.Service.Dto",
             "Replacers": [
               {
-                "CurrentValue": "Agt.Concurso.Drh.Shared.Models.Db",
-                "NewValue": "Agt.Concurso.Drh.Shared.Models.Dto"
+                "CurrentValue": "BaseEntity",
+                "NewValue": "BaseDto"
               }
             ]
           }
@@ -150,6 +47,114 @@
           {
             "Trailer": "Config",
             "Output": "Agt.Concurso.Drh.Perfil.Service/Data",
+            "Template": "efconfig.tmp",
+            "Builders": {
+              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",
+              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
+            }
+          }
+        ]
+      }
+    },
+    "Agt.Concurso.Drh.Concurso": {
+      "AppPath": "/mnt/F868BF7668BF326C/dev/agt/dotnet/Agt.Concurso.Drh/Agt.Concurso.Drh.Concurso",
+      "Scaffolders": {
+        "Models": [
+          {
+            "DbModels": "Agt.Concurso.Drh.Concurso.Service/Models"
+          }
+        ],
+        "Controller": [
+          {
+            "Trailer": "Controller",
+            "Output": "Agt.Concurso.Drh.Concurso.Api/Controllers",
+            "Template": "controller.tmp"
+          }
+        ],
+        "Service": [
+          {
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.Concurso.Service/Services/Implementations",
+            "Template": "service.tmp"
+          },
+          {
+            "Header": "I",
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.Concurso.Service/Services/Interfaces",
+            "Template": "iservice.tmp"
+          }
+        ],
+        "ViewModel": [
+          {
+            "Trailer": "Dto",
+            "Output": "Agt.Concurso.Drh.Concurso.Service/Dto",
+            "Namespace": "Agt.Concurso.Drh.Concurso.Service.Dto",
+            "Replacers": [
+              {
+                "CurrentValue": "BaseEntity",
+                "NewValue": "BaseDto"
+              }
+            ]
+          }
+        ],
+        "EFCore": [
+          {
+            "Trailer": "Config",
+            "Output": "Agt.Concurso.Drh.Concurso.Service/Data",
+            "Template": "efconfig.tmp",
+            "Builders": {
+              "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",
+              "Relation:One": "builder.HasOne(e => e.@-Relation-@).WithMany(e => e.@-Model-@s).HasForeignKey(e => e.@-Relation-@Id).OnDelete(DeleteBehavior.NoAction);"
+            }
+          }
+        ]
+      }
+    },
+    "Agt.Concurso.Drh.TesteApuramento": {
+      "AppPath": "/mnt/F868BF7668BF326C/dev/agt/dotnet/Agt.Concurso.Drh/Agt.Concurso.Drh.TesteApuramento",
+      "Scaffolders": {
+        "Models": [
+          {
+            "DbModels": "Agt.Concurso.Drh.TesteApuramento.Service/Models"
+          }
+        ],
+        "Controller": [
+          {
+            "Trailer": "Controller",
+            "Output": "Agt.Concurso.Drh.TesteApuramento.Api/Controllers",
+            "Template": "controller.tmp"
+          }
+        ],
+        "Service": [
+          {
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.TesteApuramento.Service/Services/Implementations",
+            "Template": "service.tmp"
+          },
+          {
+            "Header": "I",
+            "Trailer": "Service",
+            "Output": "Agt.Concurso.Drh.TesteApuramento.Service/Services/Interfaces",
+            "Template": "iservice.tmp"
+          }
+        ],
+        "ViewModel": [
+          {
+            "Trailer": "Dto",
+            "Output": "Agt.Concurso.Drh.TesteApuramento.Service/Dto",
+            "Namespace": "Agt.Concurso.Drh.TesteApuramento.Service.Dto",
+            "Replacers": [
+              {
+                "CurrentValue": "BaseEntity",
+                "NewValue": "BaseDto"
+              }
+            ]
+          }
+        ],
+        "EFCore": [
+          {
+            "Trailer": "Config",
+            "Output": "Agt.Concurso.Drh.TesteApuramento.Service/Data",
             "Template": "efconfig.tmp",
             "Builders": {
               "Property": "builder.Property(e => e.@-Name-@).HasColumnName(nameof(@-Model-@.@-Name-@).ToUpperSnakeCase()).IsRequired();",

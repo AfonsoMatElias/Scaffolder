@@ -88,13 +88,13 @@ namespace Scaffolder
 
 		public static List<string> LoadTemplateLines(string templ, Configuration config, int count)
 		{
-			List<string> data = new List<string>();
+			List<string> data = Array.Empty<string>().ToList();
 			if (File.Exists(config.Template) && templ == null)
 				data = File.ReadAllLines(config.Template).ToList();
 			else if (count > 1)
 				data = File.ReadAllLines(config.Template).ToList();
 
-			if (data == null && templ != null)
+			if (data.Count == 0 && templ != null)
 				data = templ.Split("\n").ToList();
 
 			return data;
