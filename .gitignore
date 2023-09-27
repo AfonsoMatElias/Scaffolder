@@ -3,6 +3,6 @@
 bin
 obj
 
-apps
+apps/*
 
 .vscode

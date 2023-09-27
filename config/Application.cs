@@ -9,249 +9,249 @@ using Newtonsoft.Json;
 
 namespace Scaffolder
 {
-    public class Application
-    {
-        private string configFilePath;
+	public class Application
+	{
+		private string configFilePath;
 
-        public string CurrentDirectory { get; set; }
+		public string CurrentDirectory { get; set; }
 
-        public string Name { get; set; }
-        public string Version { get; set; }
-        public IDictionary<string, dynamic> Applications { get; set; }
+		public string Name { get; set; }
+		public string Version { get; set; }
+		public IDictionary<string, dynamic> Applications { get; set; }
 
-        public Project SelectedProject { get; internal set; }
+		public Project SelectedProject { get; internal set; }
 
-        public static Application Instance;
-
-
-        public Application(string configFilePath = "config.json")
-        {
-            configFilePath = configFilePath ?? "config.json";
-
-            this.CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            this.configFilePath = Path.Combine(this.CurrentDirectory, configFilePath);
-
-            Instance = this;
-        }
-        public void Run()
-        {
-        Init:
-            // Spreading the options
-            var selectedAppName = this.UserSelectedOption();
-
-            // Loading the project
-            this.SelectedProject = this.GetProject(selectedAppName);
-            Application.Instance.SelectedProject = this.SelectedProject;
+		public static Application Instance;
 
 
-        Beginning:
-            var selectedOption = this.SelectedProject.UserSelectedOption(
-                $"Project -> ({ selectedAppName }|Yellow)\n"
-            );
+		public Application(string configFilePath = "config.json")
+		{
+			configFilePath = configFilePath ?? "config.json";
 
-            try
-            {
-                if (selectedOption == "Exit")
-                {
-                    Console.Clear();
-                    goto Init;
-                }
+			this.CurrentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+			this.configFilePath = Path.Combine(this.CurrentDirectory, configFilePath);
 
-                IEnumerable<Type> types = Assembly.GetExecutingAssembly().ExportedTypes;
-                var type = types.FirstOrDefault(x => x.Name == $"{ selectedOption }Scaffold");
+			Instance = this;
+		}
+		public void Run()
+		{
+		Init:
+			// Spreading the options
+			var selectedAppName = this.UserSelectedOption();
 
-                if (type == null) throw new Exception("Not Found");
+			// Loading the project
+			this.SelectedProject = this.GetProject(selectedAppName);
+			Application.Instance.SelectedProject = this.SelectedProject;
 
-                // Instantiating the scaffolder class chosed
-                var @class = Activator.CreateInstance(type);
-                type.GetMethod("Init")?.Invoke(@class, null);
 
-                Shared.Pause();
-            }
-            catch
-            {
-                Logger.Error("Unavailable option, try again!");
-            }
+		Beginning:
+			var selectedOption = this.SelectedProject.UserSelectedOption(
+				$"Project -> ({selectedAppName}|Yellow)\n"
+			);
 
-            goto Beginning;
-        }
+			try
+			{
+				if (selectedOption == "Exit")
+				{
+					Console.Clear();
+					goto Init;
+				}
 
-        public string UserSelectedOption()
-        {
-        Beginning:
+				IEnumerable<Type> types = Assembly.GetExecutingAssembly().ExportedTypes;
+				var type = types.FirstOrDefault(x => x.Name == $"{selectedOption}Scaffold");
 
-            var index = 0;
-            var keys = this.Applications.Keys;
+				if (type == null) throw new Exception("Not Found");
 
-            Logger.Log("Scaffolder Projects\n");
+				// Instantiating the scaffolder class chosed
+				var @class = Activator.CreateInstance(type);
+				type.GetMethod("Init")?.Invoke(@class, null);
 
-            // Printing the options
-            Logger.Log($"({index++}|Yellow). Create (New|Blue) Config");
-            foreach (var key in keys)
-                Logger.Log($"({index++}|Yellow). { key }");
+				Shared.Pause();
+			}
+			catch
+			{
+				Logger.Error("Unavailable option, try again!");
+			}
 
-            Logger.ILog("Choose an option above: ");
+			goto Beginning;
+		}
 
-            // Reading the selected option
-            var typedKey = Logger.ReadKey().KeyChar;
-            Logger.Log(""); // Giving some space
+		public string UserSelectedOption()
+		{
+		Beginning:
 
-            // If invalid
-            if (!int.TryParse(typedKey.ToString(), out int selectedOptionIndex) ||
-                (keys.Count <= (selectedOptionIndex - 1)))
-            {
-                goto Beginning;
-            }
+			var index = 0;
+			var keys = this.Applications.Keys;
 
-            if (selectedOptionIndex == 0)
-            {
-                Logger.ILog($"Type App Name: ");
-                var typedLine = Logger.ReadLine().Trim();
+			Logger.Log("Scaffolder Projects\n");
 
-                if (string.IsNullOrEmpty(typedLine))
-                {
-                    Logger.Error("Invalid Name Provided!");
-                    goto Beginning;
-                }
+			// Printing the options
+			Logger.Log($"({index++}|Yellow). Create (New|Blue) Config");
+			foreach (var key in keys)
+				Logger.Log($"({index++}|Yellow). {key}");
 
-                if (this.Applications.ContainsKey(typedLine))
-                {
-                    Logger.Error("This Application Scaffolder already exists.");
-                    goto Beginning;
-                }
+			Logger.ILog("Choose an option above: ");
 
-                this.Applications.Add(typedLine, new
-                {
-                    AppPath = ".",
-                    Scaffolders = new
-                    {
-                        Models = new[]{
-                                new {
-                                    DbModels = $"{ typedLine }/Models"
-                                }
-                            },
+			// Reading the selected option
+			var typedKey = Logger.ReadKey().KeyChar;
+			Logger.Log(""); // Giving some space
 
-                        Controller = new[]{
-                                new {
-                                    Trailer = "Controller",
-                                    Output = $"{ typedLine }/Controllers/Api",
-                                    Template = "controller.tmp"
-                                }
-                            },
+			// If invalid
+			if (!int.TryParse(typedKey.ToString(), out int selectedOptionIndex) ||
+				(keys.Count <= (selectedOptionIndex - 1)))
+			{
+				goto Beginning;
+			}
 
-                        Service = new[]{
-                                new {
-                                    Trailer = "Service",
-                                    Output = $"{ typedLine }/Services",
-                                    Template = "service.tmp"
-                                }
-                            },
+			if (selectedOptionIndex == 0)
+			{
+				Logger.ILog($"Type App Name: ");
+				var typedLine = Logger.ReadLine().Trim();
 
-                        ViewModel = new[]{
-                                new {
-                                    Trailer = "Dto",
-                                    Output = $"{ typedLine }/Dto",
-                                    Namespace = $"{ typedLine }",
-                                }
-                            },
+				if (string.IsNullOrEmpty(typedLine))
+				{
+					Logger.Error("Invalid Name Provided!");
+					goto Beginning;
+				}
 
-                        EFCore = new[] {
-                                new {
-                                    Trailer = "Config",
-                                    Output = $"{ typedLine }/Data",
-                                    Template = "efconfig.tmp"
-                                }
-                            }
-                    }
-                });
+				if (this.Applications.ContainsKey(typedLine))
+				{
+					Logger.Error("This Application Scaffolder already exists.");
+					goto Beginning;
+				}
 
-                var content = JsonConvert.SerializeObject(this, Formatting.Indented);
+				this.Applications.Add(typedLine, new
+				{
+					AppPath = ".",
+					Scaffolders = new
+					{
+						Models = new[]{
+								new {
+									DbModels = $"{ typedLine }/Models"
+								}
+							},
 
-                File.WriteAllText(configFilePath, content);
-                var dir = Directory.CreateDirectory(Path.Combine("apps", typedLine));
+						Controller = new[]{
+								new {
+									Trailer = "Controller",
+									Output = $"{ typedLine }/Controllers/Api",
+									Template = "controller.tmp"
+								}
+							},
 
-                // Copying the files into the dir
-                Directory.EnumerateFiles(".tmp")
-                    .ToList()
-                    .ForEach(path =>
-                    {
+						Service = new[]{
+								new {
+									Trailer = "Service",
+									Output = $"{ typedLine }/Services",
+									Template = "service.tmp"
+								}
+							},
 
-                        var fileInfo = new FileInfo(path);
-                        var fileContent = File.ReadAllText(path);
-                        var fileNewContent = fileContent.Replace("@-Namespace-@", typedLine);
-                        File.WriteAllText(Path.Combine(dir.FullName, fileInfo.Name), fileNewContent);
-                    });
+						ViewModel = new[]{
+								new {
+									Trailer = "Dto",
+									Output = $"{ typedLine }/Dto",
+									Namespace = $"{ typedLine }",
+								}
+							},
 
-                Logger.Log("");
-                Logger.Log($"({ typedLine }|Blue) Config Added to (config.json|Yellow), please open it, configure it " +
-                    "and add all the missing templates according to the new project classes. \nPlease add: ");
-                Logger.Warn($"controller.tmp, efconfig.tmp, viewmodel.tmp and service.tmp");
+						EFCore = new[] {
+								new {
+									Trailer = "Config",
+									Output = $"{ typedLine }/Data",
+									Template = "efconfig.tmp"
+								}
+							}
+					}
+				});
 
-                Logger.Log("\nAfter every change type any key to reload the configurations...");
-                Logger.ReadKey();
-                Logger.Log("");
+				var content = JsonConvert.SerializeObject(this, Formatting.Indented);
 
-                this.Init(); // Reloading all the configurations
-                goto Beginning;
-            }
+				File.WriteAllText(configFilePath, content);
+				var dir = Directory.CreateDirectory(Path.Combine(this.CurrentDirectory, "apps", typedLine));
 
-            Console.Clear();
-            return keys.ElementAt(selectedOptionIndex - 1);
-        }
+				// Copying the files into the dir
+				Directory.EnumerateFiles(Path.Combine(this.CurrentDirectory, ".tmp"))
+					.ToList()
+					.ForEach(path =>
+					{
 
-        public Application Init()
-        {
-            Logger.Log("Loading the configurations...");
-            if (!File.Exists(configFilePath))
-            {
-                var content = JsonConvert.SerializeObject(new
-                {
-                    Name = "Scaffolder",
-                    Version = "1.1.0",
-                    Applications = new { }
-                }, Formatting.Indented);
+						var fileInfo = new FileInfo(path);
+						var fileContent = File.ReadAllText(path);
+						var fileNewContent = fileContent.Replace("@-Namespace-@", typedLine);
+						File.WriteAllText(Path.Combine(dir.FullName, fileInfo.Name), fileNewContent);
+					});
 
-                File.WriteAllText(configFilePath, content);
-            }
+				Logger.Log("");
+				Logger.Log($"({typedLine}|Blue) Config Added to (config.json|Yellow), please open it, configure it " +
+					"and add all the missing templates according to the new project classes. \nPlease add: ");
+				Logger.Warn($"controller.tmp, efconfig.tmp, viewmodel.tmp and service.tmp");
 
-            var configContent = File.ReadAllText(configFilePath);
-            var config = JsonConvert.DeserializeObject<Application>(configContent);
-            var applicationType = typeof(Application);
+				Logger.Log("\nAfter every change type any key to reload the configurations...");
+				Logger.ReadKey();
+				Logger.Log("");
 
-            // Setting all the values in the main object
-            applicationType.GetProperties()
-                .ToList()
-                .ForEach(item =>
-                {
-                    // Getting the value from the source
-                    var value = applicationType.GetProperty(item.Name).GetValue(config);
-                    // Setting it to the destination
-                    item.SetValue(this, value);
-                });
+				this.Init(); // Reloading all the configurations
+				goto Beginning;
+			}
 
-            Logger.Done("Configurations successfuly loaded.");
-            Thread.Sleep(500);
-            Console.Clear();
+			Console.Clear();
+			return keys.ElementAt(selectedOptionIndex - 1);
+		}
 
-            return this;
-        }
+		public Application Init()
+		{
+			Logger.Log("Loading the configurations...");
+			if (!File.Exists(configFilePath))
+			{
+				var content = JsonConvert.SerializeObject(new
+				{
+					Name = "Scaffolder",
+					Version = "1.1.0",
+					Applications = new { }
+				}, Formatting.Indented);
 
-        public Project GetProject(string appKey)
-        {
-            if (!this.Applications.ContainsKey(appKey))
-            {
-                Logger.Error("Application Configuration Not Found.");
-                return null;
-            }
+				File.WriteAllText(configFilePath, content);
+			}
 
-            var project = (Project)JsonConvert.DeserializeObject<Project>(
-                this.Applications[appKey].ToString()
-            );
+			var configContent = File.ReadAllText(configFilePath);
+			var config = JsonConvert.DeserializeObject<Application>(configContent);
+			var applicationType = typeof(Application);
 
-            // Setting the name of the selected Application
-            project.AppName = appKey;
+			// Setting all the values in the main object
+			applicationType.GetProperties()
+				.ToList()
+				.ForEach(item =>
+				{
+					// Getting the value from the source
+					var value = applicationType.GetProperty(item.Name).GetValue(config);
+					// Setting it to the destination
+					item.SetValue(this, value);
+				});
 
-            return project;
-        }
-    }
+			Logger.Done("Configurations successfuly loaded.");
+			Thread.Sleep(500);
+			Console.Clear();
+
+			return this;
+		}
+
+		public Project GetProject(string appKey)
+		{
+			if (!this.Applications.ContainsKey(appKey))
+			{
+				Logger.Error("Application Configuration Not Found.");
+				return null;
+			}
+
+			var project = (Project)JsonConvert.DeserializeObject<Project>(
+				this.Applications[appKey].ToString()
+			);
+
+			// Setting the name of the selected Application
+			project.AppName = appKey;
+
+			return project;
+		}
+	}
 }
