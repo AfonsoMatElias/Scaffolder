@@ -45,7 +45,7 @@ public class ViewModelScaffold : GenerationConditions
 	{
 		try
 		{
-			var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.cs");
+			var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}");
 
 			if (!this.FileExistenceHandler(filePath, name, config))
 				return;
@@ -117,7 +117,7 @@ public class ViewModelScaffold : GenerationConditions
 			// Reading the file by lines
 			var mTemplate = String.Join("\n", dtoLines);
 			File.WriteAllText(filePath, mTemplate);
-			Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
+			Logger.Done($"file {config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"} created.");
 		}
 		catch (Exception ex)
 		{

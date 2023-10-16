@@ -10,6 +10,7 @@ namespace Scaffolder.Models
         public string Trailer { get; set; }
         public string Namespace { get; set; }
         public string OriginalOutput { get; set; }
+        public string Extension { get; set; }
 
 
         private string mOutput;

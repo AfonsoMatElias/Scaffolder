@@ -50,7 +50,7 @@ namespace Scaffolder.Scaffold
 
 			try
 			{
-				var filePath = Path.Combine(config.Output, "Configurations", $"{config.Header}{name}{config.Trailer}.cs");
+				var filePath = Path.Combine(config.Output, "Configurations", $"{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}");
 
 				if (!this.FileExistenceHandler(filePath, name, config))
 					return;
@@ -137,7 +137,7 @@ namespace Scaffolder.Scaffold
 
 				File.WriteAllText(filePath, string.Join(Environment.NewLine, templateLines)
 					.Replace("@-Model-@", model.Name));
-				Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
+				Logger.Done($"file {config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"} created.");
 			}
 			catch (Exception ex)
 			{

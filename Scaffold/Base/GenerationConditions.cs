@@ -17,7 +17,7 @@ namespace Scaffolder.Scaffold
             if (YesForAll == null && NoForAll == null)
             {
                 Logger.Log("");
-                Logger.Warn($"Do you want to remake '{config.Header}{name}{config.Trailer}.cs'?");
+                Logger.Warn($"Do you want to remake '{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}'?");
                 Logger.Log("[y -> yes, n - no, ya - yes for all, na - no for all]: ");
                 var op = Logger.ReadLine();
                 Logger.Log("");
@@ -29,13 +29,13 @@ namespace Scaffolder.Scaffold
                         YesForAll = true;
                         return true;
                     case "n":
-                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
+                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}' was not created!\n");
                         return false;
                     case "na":
                         NoForAll = true;
                         return false;
                     default:
-                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.cs' was not created!\n");
+                        Logger.Warn($"WARNING: File '{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}' was not created!\n");
                         return false;
                 }
             }

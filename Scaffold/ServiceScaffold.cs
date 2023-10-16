@@ -47,7 +47,7 @@ namespace Scaffolder.Scaffold
 
 			try
 			{
-				var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.cs");
+				var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}");
 
 				if (!this.FileExistenceHandler(filePath, name, config))
 					return;
@@ -56,7 +56,7 @@ namespace Scaffolder.Scaffold
 				config.Replacers.ForEach(x => template = template.Replace(x.CurrentValue, x.NewValue));
 
 				File.WriteAllText(filePath, template.Replace("@-Model-@", name).Replace("@-Namespace-@", config.Namespace));
-				Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
+				Logger.Done($"file {config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"} created.");
 			}
 			catch (Exception ex)
 			{

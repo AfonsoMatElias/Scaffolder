@@ -9,7 +9,7 @@ namespace Scaffolder.Scaffold
 	public class ControllerScaffold : GenerationConditions
 	{
 		public Scaffolders Scaffolders { get; set; }
-		public List<Configuration> configs { get; set; }
+		public List<Configuration> Configs { get; set; }
 
 		private string template = null;
 		private string name;
@@ -18,7 +18,7 @@ namespace Scaffolder.Scaffold
 		{
 			this.Scaffolders = Application.Instance.SelectedProject.GetScaffolders();
 			this.name = this.GetType().Name.Replace("Scaffold", "");
-			this.configs = this.Scaffolders.Get(this.name);
+			this.Configs = this.Scaffolders.Get(this.name);
 		}
 
 		public void Run(string name)
@@ -26,7 +26,7 @@ namespace Scaffolder.Scaffold
 			void exec(string m)
 			{
 				if (!this.Scaffolders.ModelExists(m)) return;
-				configs.ForEach(cf => this.Generate(m, cf));
+				Configs.ForEach(cf => this.Generate(m, cf));
 			}
 
 			if (!name.Contains(','))
@@ -34,7 +34,7 @@ namespace Scaffolder.Scaffold
 			else
 				name.Split(",").Select(s => s.Trim()).ToList().ForEach(m =>
 				{
-					configs.ForEach(cf =>
+					Configs.ForEach(cf =>
 					{
 						this.Generate(m, cf);
 					});
@@ -44,12 +44,12 @@ namespace Scaffolder.Scaffold
 		public void Generate(string name, Configuration config)
 		{
 			// Loading the template one if there is only one configuration
-			this.template = Shared.LoadTemplate(this.template, config, this.configs.Count);
+			this.template = Shared.LoadTemplate(this.template, config, this.Configs.Count);
 
 			try
 			{
 				// Building the full path
-				var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.cs");
+				var filePath = Path.Combine(config.Output, $"{config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"}");
 
 				if (!this.FileExistenceHandler(filePath, name, config))
 					return;
@@ -58,7 +58,7 @@ namespace Scaffolder.Scaffold
 				config.Replacers.ForEach(x => template = template.Replace(x.CurrentValue, x.NewValue));
 
 				File.WriteAllText(filePath, template.Replace("@-Model-@", name).Replace("@-Namespace-@", config.Namespace));
-				Logger.Done($"file {config.Header}{name}{config.Trailer}.cs created.");
+				Logger.Done($"file {config.Header}{name}{config.Trailer}.{config.Extension ?? "cs"} created.");
 
 			}
 			catch (Exception ex)
@@ -99,7 +99,7 @@ namespace Scaffolder.Scaffold
 					break;
 
 				case GenerationOptions.All_At_Once:
-					this.Scaffolders.Models.ForEach(model => configs.ForEach(cf => this.Generate(model.Name, cf)));
+					this.Scaffolders.Models.ForEach(model => Configs.ForEach(cf => this.Generate(model.Name, cf)));
 
 					Shared.Pause();
 					break;
