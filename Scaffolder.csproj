@@ -5,10 +5,14 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include=".tmp\**\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
